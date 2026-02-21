@@ -1,0 +1,30 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_WS_URL: ${VITE_WS_URL}
+    restart: unless-stopped
+    # Not exposed to the host — only reachable via the Tailscale sidecar
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    hostname: command-pidog-web
+    restart: unless-stopped
+    environment:
+      TS_AUTHKEY: ${TS_AUTHKEY}
+      TS_HOSTNAME: command-pidog-web
+      TS_SERVE_CONFIG: /config/serve-config.json
+      TS_STATE_DIR: /var/lib/tailscale
+    volumes:
+      - tailscale-state:/var/lib/tailscale
+      - ./tailscale/serve-config.json:/config/serve-config.json:ro
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    devices:
+      - /dev/net/tun:/dev/net/tun
+
+volumes:
+  tailscale-state:
