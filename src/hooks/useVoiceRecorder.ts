@@ -171,10 +171,9 @@ export function useVoiceRecorder(): VoiceRecorderResult {
   }, [stopRecording, processAudio])
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    e.preventDefault()
     touchStartCountRef.current += 1
     if (touchStartCountRef.current === 1) {
-      // First touch: request permission only
+      // First touch: request permission only (do not prevent default — no recording yet)
       setState('requesting_permission')
       navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
         permissionGrantedRef.current = true
@@ -184,7 +183,8 @@ export function useVoiceRecorder(): VoiceRecorderResult {
         setState('idle')
       })
     } else {
-      // Subsequent touches: start recording
+      // Subsequent touches: start recording — prevent scroll/zoom while recording
+      e.preventDefault()
       startRecording()
     }
   }, [startRecording])

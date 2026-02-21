@@ -3,6 +3,7 @@ import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Square } from 'lucide-react'
 import { api } from '../../api/client'
 
 const REPEAT_INTERVAL = 500
+const DPAD_SPEED = 98
 
 function DPadButton({
   label,
@@ -19,7 +20,7 @@ function DPadButton({
 
   const sendAction = async (name: string) => {
     try {
-      await api.actions.execute({ actions: [name], speed: 98 })
+      await api.actions.execute({ actions: [name], speed: DPAD_SPEED })
     } catch {
       // ignore
     }

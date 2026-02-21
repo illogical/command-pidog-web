@@ -18,6 +18,7 @@ import type {
 } from './types'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
+const DEFAULT_AUDIO_FILENAME = 'audio.wav'
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const resp = await fetch(`${API_BASE}${path}`, {
@@ -66,7 +67,7 @@ export const api = {
     chat: (req: ChatRequest) => post<ChatResponse>('/api/v1/agent/chat', req),
     voice: (audio: Blob, filename?: string) => {
       const form = new FormData()
-      form.append('audio', audio, filename || 'audio.wav')
+      form.append('audio', audio, filename || DEFAULT_AUDIO_FILENAME)
       return request<ChatResponse>('/api/v1/agent/voice', { method: 'POST', body: form, headers: {} })
     },
     skill: () => get<{ skill: string }>('/api/v1/agent/skill'),
